@@ -1,7 +1,0 @@
-{
-  "files.associations": {
-    "type.h": "c",
-    "sdl_keyboard.h": "c",
-    "control.h": "c"
-  }
-}

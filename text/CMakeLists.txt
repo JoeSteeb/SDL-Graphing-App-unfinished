@@ -18,5 +18,5 @@ set(SOURCE_FILES
 
 include_directories(src)
 
-add_executable(MyProject ${SOURCE_FILES})
-target_link_libraries(MyProject SDL2::Main SDL2::Net SDL2::Mixer SDL2::Image SDL2::TTF SDL2::GFX)
+add_executable(text ${SOURCE_FILES})
+target_link_libraries(text SDL2::Main SDL2::Net SDL2::Mixer SDL2::Image SDL2::TTF SDL2::GFX)
