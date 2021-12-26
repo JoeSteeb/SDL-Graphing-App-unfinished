@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "cstdlib": "c",
+    "sdl.h": "c",
+    "sdl_ttf.h": "c",
+    "deque": "c",
+    "string": "c",
+    "vector": "c"
+  }
+}
