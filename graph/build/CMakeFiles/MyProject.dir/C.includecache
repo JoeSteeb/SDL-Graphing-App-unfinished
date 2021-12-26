@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/j/code/pProj/sdl/graph/draw.c
+SDL2/SDL.h
+-
+draw.h
+/home/j/code/pProj/sdl/graph/draw.h
+
+/home/j/code/pProj/sdl/graph/draw.h
+
