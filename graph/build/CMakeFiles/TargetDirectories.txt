@@ -1,3 +1,0 @@
-/home/j/code/pProj/sdl/graph/build/CMakeFiles/rebuild_cache.dir
-/home/j/code/pProj/sdl/graph/build/CMakeFiles/edit_cache.dir
-/home/j/code/pProj/sdl/graph/build/CMakeFiles/graph.dir

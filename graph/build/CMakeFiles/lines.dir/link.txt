@@ -1,1 +1,0 @@
-/usr/bin/cc    CMakeFiles/lines.dir/main.c.o CMakeFiles/lines.dir/draw.c.o  -o lines  -lSDL2 -lm 
