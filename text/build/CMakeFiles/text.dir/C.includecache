@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/j/code/pProj/sdl/SDL-Graphing-App-unfinished/text/main.c
+stdlib.h
+-
+SDL2/SDL.h
+-
+SDL2/SDL_keyboard.h
+-
+SDL2/SDL_ttf.h
+-
+

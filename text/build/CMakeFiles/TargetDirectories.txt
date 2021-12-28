@@ -1,0 +1,3 @@
+/home/j/code/pProj/sdl/SDL-Graphing-App-unfinished/text/build/CMakeFiles/rebuild_cache.dir
+/home/j/code/pProj/sdl/SDL-Graphing-App-unfinished/text/build/CMakeFiles/edit_cache.dir
+/home/j/code/pProj/sdl/SDL-Graphing-App-unfinished/text/build/CMakeFiles/text.dir

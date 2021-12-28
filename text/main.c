@@ -69,13 +69,18 @@ int textUI(writer *cWriter, SDL_Event event)
             case SDLK_BACKSPACE:
                 if (cWriter->index > 0)
                 {
-                    (cWriter->index)--;
-                    cWriter->text[cWriter->index + 1] = 0;
+                    if (cWriter->index < cWriter->length)
+                    {
+                        printf("char at index%c\n", cWriter->text[cWriter->index]);
+                        memmove(&(cWriter->text[cWriter->index - 1]), &(cWriter->text[cWriter->index]), cWriter->length + 1 - (cWriter->index));
+                        cWriter->length--;
+                    }
+                    else
+                    {
+                        cWriter->text[cWriter->length] = 0;
+                    }
                     cWriter->length--;
-                }
-                else
-                {
-                    cWriter->index = 0;
+                    cWriter->index--;
                 }
                 break;
 
@@ -92,10 +97,22 @@ int textUI(writer *cWriter, SDL_Event event)
             default:
                 // printf("key = %d\n", event.key.keysym.sym);
                 // printf("keyDown = %d\n", cWriter->keyDown);
-                cWriter->text[cWriter->index] = event.key.keysym.sym;
-                (cWriter->index)++;
-                cWriter->text[cWriter->index + 1] = 0;
-                cWriter->length++;
+                if (cWriter->index == cWriter->length)
+                {
+                    cWriter->text[cWriter->index] = event.key.keysym.sym;
+                    cWriter->index++;
+                    cWriter->length++;
+                    cWriter->text[cWriter->length + 1] = 0;
+                }
+                else
+                {
+                    // copied extra char to leave in null terminator
+                    memmove(&(cWriter->text[cWriter->index + 2]), &(cWriter->text[cWriter->index + 1]), cWriter->length - (cWriter->index));
+                    cWriter->text[cWriter->index] = event.key.keysym.sym;
+                    cWriter->index++;
+                    cWriter->length++;
+                }
+                break;
             }
 
             cWriter->currentKey = event.key.keysym.sym;
