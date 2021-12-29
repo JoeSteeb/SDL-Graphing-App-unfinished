@@ -14,16 +14,18 @@ typedef struct
     int keyDown;
     int length;
     int index;
+    int cursorState;
 } writer;
 
 writer *walloc()
 {
     writer *new = malloc(sizeof(writer));
     bzero(new->text, 256);
-    strcpy(new->text, "hello world");
+    strcpy(new->text, "");
     new->keyDown = 0;
     new->index = 0;
     new->length = 0;
+    new->cursorState = 0;
     return new;
 }
 
@@ -58,7 +60,7 @@ void get_text_and_rect(SDL_Renderer *renderer, int x, int y, char *text,
 
 int textUI(writer *cWriter, SDL_Event event)
 {
-
+    int shiftMask = 0;
     switch (event.type)
     {
     case SDL_KEYDOWN:
@@ -71,27 +73,32 @@ int textUI(writer *cWriter, SDL_Event event)
                 {
                     if (cWriter->index < cWriter->length)
                     {
-                        printf("char at index%c\n", cWriter->text[cWriter->index]);
                         memmove(&(cWriter->text[cWriter->index - 1]), &(cWriter->text[cWriter->index]), cWriter->length + 1 - (cWriter->index));
-                        cWriter->length--;
-                    }
-                    else
-                    {
-                        cWriter->text[cWriter->length] = 0;
                     }
                     cWriter->length--;
                     cWriter->index--;
+                    cWriter->text[cWriter->length + 1] = 0;
                 }
                 break;
 
             case SDLK_LEFT:
-                cWriter->index--;
-                cWriter->text[cWriter->index + 1] = cWriter->text[cWriter->index];
+                if (cWriter->index > 0)
+                {
+                    cWriter->index--;
+                    cWriter->text[cWriter->index + 1] = cWriter->text[cWriter->index];
+                }
                 break;
 
             case SDLK_RIGHT:
-                cWriter->index++;
-                cWriter->text[cWriter->index - 1] = cWriter->text[cWriter->index];
+                if (cWriter->index < cWriter->length)
+                {
+                    cWriter->index++;
+                    cWriter->text[cWriter->index - 1] = cWriter->text[cWriter->index];
+                }
+                break;
+
+            case SDLK_LSHIFT:
+                shiftMask = 1;
                 break;
 
             default:
@@ -100,25 +107,25 @@ int textUI(writer *cWriter, SDL_Event event)
                 if (cWriter->index == cWriter->length)
                 {
                     cWriter->text[cWriter->index] = event.key.keysym.sym;
-                    cWriter->index++;
-                    cWriter->length++;
-                    cWriter->text[cWriter->length + 1] = 0;
+                    cWriter->text[cWriter->length + 2] = 0;
                 }
                 else
                 {
                     // copied extra char to leave in null terminator
                     memmove(&(cWriter->text[cWriter->index + 2]), &(cWriter->text[cWriter->index + 1]), cWriter->length - (cWriter->index));
                     cWriter->text[cWriter->index] = event.key.keysym.sym;
-                    cWriter->index++;
-                    cWriter->length++;
                 }
+                cWriter->index++;
+                cWriter->length++;
                 break;
             }
 
             cWriter->currentKey = event.key.keysym.sym;
-            cWriter->keyDown = 1;
+            if (!shiftMask)
+            {
+                cWriter->keyDown = 1;
+            }
         }
-        cWriter->text[cWriter->index] = '|';
         break;
 
     case SDL_KEYUP:
@@ -130,6 +137,16 @@ int textUI(writer *cWriter, SDL_Event event)
 
     default:
         break;
+    }
+    if (cWriter->cursorState)
+    {
+        cWriter->text[cWriter->index] = ' ';
+        cWriter->cursorState = 0;
+    }
+    else
+    {
+        cWriter->text[cWriter->index] = '|';
+        cWriter->cursorState = 1;
     }
 }
 
