@@ -58,9 +58,9 @@ void get_text_and_rect(SDL_Renderer *renderer, int x, int y, char *text,
     rect->h = text_height;
 }
 
-int textUI(writer *cWriter, SDL_Event event)
+int textUI(writer *cWriter, SDL_Event event, int *shiftMask)
 {
-    int shiftMask = 0;
+    int increment = 0;
     switch (event.type)
     {
     case SDL_KEYDOWN:
@@ -98,32 +98,77 @@ int textUI(writer *cWriter, SDL_Event event)
                 break;
 
             case SDLK_LSHIFT:
-                shiftMask = 1;
+                *shiftMask = 1;
                 break;
 
             default:
                 // printf("key = %d\n", event.key.keysym.sym);
                 // printf("keyDown = %d\n", cWriter->keyDown);
-                if (cWriter->index == cWriter->length)
+                if (event.key.keysym.sym >= 'a' && event.key.keysym.sym <= 'z' || event.key.keysym.sym == ' ')
                 {
-                    cWriter->text[cWriter->index] = event.key.keysym.sym;
-                    cWriter->text[cWriter->length + 2] = 0;
+                    if (!(cWriter->index == cWriter->length))
+                    {
+
+                        // copied extra char to leave in null terminator
+                        memmove(&(cWriter->text[cWriter->index + 2]), &(cWriter->text[cWriter->index + 1]), cWriter->length - (cWriter->index));
+                    }
+                    if (*shiftMask && event.key.keysym.sym != ' ')
+                    {
+                        cWriter->text[cWriter->index] = event.key.keysym.sym - 32;
+                    }
+                    else
+                    {
+                        cWriter->text[cWriter->index] = event.key.keysym.sym;
+                    }
+                    increment = 1;
                 }
-                else
+
+                else if (event.key.keysym.sym >= '-' && event.key.keysym.sym <= '9')
                 {
-                    // copied extra char to leave in null terminator
-                    memmove(&(cWriter->text[cWriter->index + 2]), &(cWriter->text[cWriter->index + 1]), cWriter->length - (cWriter->index));
-                    cWriter->text[cWriter->index] = event.key.keysym.sym;
+                    if (!(cWriter->index == cWriter->length))
+                    {
+                        // copied extra char to leave in null terminator
+                        memmove(&(cWriter->text[cWriter->index + 2]), &(cWriter->text[cWriter->index + 1]), cWriter->length - (cWriter->index));
+                    }
+                    if (!*shiftMask)
+                    {
+                        cWriter->text[cWriter->index] = event.key.keysym.sym;
+                        increment = 1;
+                    }
+                    else
+                    {
+                        switch (event.key.keysym.sym)
+                        {
+                        case '9':
+                            cWriter->text[cWriter->index] = '(';
+                            increment = 1;
+                            break;
+                        case '0':
+                            cWriter->text[cWriter->index] = ')';
+                            increment = 1;
+                            break;
+                        case '8':
+                            cWriter->text[cWriter->index] = '*';
+                            increment = 1;
+                            break;
+                        case '5':
+                            cWriter->text[cWriter->index] = '%';
+                            increment = 1;
+                            break;
+                        }
+                    }
                 }
-                cWriter->index++;
-                cWriter->length++;
+
                 break;
             }
 
             cWriter->currentKey = event.key.keysym.sym;
-            if (!shiftMask)
+            cWriter->keyDown = 1;
+            if (increment)
             {
-                cWriter->keyDown = 1;
+                cWriter->text[cWriter->length + 2] = 0;
+                cWriter->index++;
+                cWriter->length++;
             }
         }
         break;
@@ -132,6 +177,10 @@ int textUI(writer *cWriter, SDL_Event event)
         if (event.key.keysym.sym == cWriter->currentKey)
         {
             cWriter->keyDown = 0;
+        }
+        if (event.key.keysym.sym == SDLK_LSHIFT)
+        {
+            *shiftMask = 0;
         }
         break;
 
@@ -148,6 +197,7 @@ int textUI(writer *cWriter, SDL_Event event)
         cWriter->text[cWriter->index] = '|';
         cWriter->cursorState = 1;
     }
+    // printf("index = %d\n", cWriter->index);
 }
 
 int main()
@@ -159,7 +209,9 @@ int main()
     SDL_Window *window;
     writer *writer1 = walloc();
     char *font_path;
+    int *shiftMask = malloc(sizeof(int));
     int quit;
+    *shiftMask = 0;
 
     font_path = "/usr/share/fonts/truetype/freefont/FreeMonoOblique.ttf";
 
@@ -184,7 +236,7 @@ int main()
                 quit = 1;
             }
         }
-        textUI(writer1, event);
+        textUI(writer1, event, shiftMask);
         // printf("index = %d\n", writer1->index);
         get_text_and_rect(renderer, 0, 0, writer1->text, font, &texture1, &rect1);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
