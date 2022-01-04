@@ -81,6 +81,15 @@ int textUI(writer *cWriter, SDL_Event event, int *shiftMask)
                 }
                 break;
 
+            case SDLK_DELETE:
+                if (cWriter->index < cWriter->length)
+                {
+                    memmove(&(cWriter->text[cWriter->index]), &(cWriter->text[cWriter->index + 1]), cWriter->length + 1 - (cWriter->index));
+                }
+                cWriter->length--;
+                cWriter->text[cWriter->length + 1] = 0;
+                break;
+
             case SDLK_LEFT:
                 if (cWriter->index > 0)
                 {
