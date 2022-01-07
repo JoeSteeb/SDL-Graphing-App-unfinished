@@ -132,7 +132,7 @@ int textUI(writer *cWriter, SDL_Event event, int *shiftMask)
                     increment = 1;
                 }
 
-                else if (event.key.keysym.sym >= '-' && event.key.keysym.sym <= '9')
+                else if (event.key.keysym.sym >= '-' && event.key.keysym.sym <= '9' || event.key.keysym.sym == '=')
                 {
                     if (!(cWriter->index == cWriter->length))
                     {
@@ -164,6 +164,9 @@ int textUI(writer *cWriter, SDL_Event event, int *shiftMask)
                             cWriter->text[cWriter->index] = '%';
                             increment = 1;
                             break;
+                        case '=':
+                            cWriter->text[cWriter->index] = '+';
+                            increment = 1;
                         }
                     }
                 }
